@@ -6,13 +6,15 @@ import { AppComponent } from './app.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 
-import { View0Component } from './components/view0.component';
-import { View1Component } from './components/view1.component';
+import { SearchreviewComponent } from './components/searchreview.component';
+import { MoviereviewlistComponent } from './components/moviereviewlist.component';
+import { PostcommentComponent } from './components/postcomment.component';
 @NgModule({
   declarations: [
     AppComponent,
-    View0Component,
-    View1Component
+    SearchreviewComponent,
+    MoviereviewlistComponent,
+    PostcommentComponent
   ],
   imports: [
     BrowserModule,

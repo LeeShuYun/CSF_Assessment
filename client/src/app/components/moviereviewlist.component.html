@@ -1,0 +1,21 @@
+<p>moviereviewlist works!</p>
+<div>
+  <span class="searchheader"> Search Result </span>
+  <button [routerLink]="['']">Back</button>
+</div>
+
+<table *ngFor="let movie of movieList">
+  <td><img src="{{imageUrl}}" /></td>
+  <td>
+    <a [routerLink]="movie.reviewUrl">
+      <h2>Title: {{movie.title}} Rating: {{movie.rating}}</h2>
+    </a>
+
+    <h3>{{movie.headline}}</h3>
+    <h4>Summary: {{movie.summary}}</h4>
+    <p>Number of Comments: {{movie.numberOfComments}}</p>
+
+    <button type="button" [routerLink]="['/view2', movie.name]">Comment</button>
+  </td>
+</table>
+<div>
