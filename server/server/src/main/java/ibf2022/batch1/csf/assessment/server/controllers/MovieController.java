@@ -101,7 +101,7 @@ public class MovieController {
 	}
 
 	// Task 5. returns number of documents in comments collection
-	@GetMapping(path = "/api/comment", produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(path = "/api/commentNum", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	public ResponseEntity<String> countComments(String movieName) {
 		int count = movieRepo.countComments();
@@ -115,9 +115,7 @@ public class MovieController {
 	}
 
 	// Task 7
-	@PostMapping(path = "/api/insertcomment", 
-	consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE, 
-	produces = MediaType.APPLICATION_JSON_VALUE)
+	@PostMapping(path = "/api/comment", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<String> insertComments(@RequestBody Comment comment) {
 		// Comment comment = new Comment();
 		// comment.setMovieName((String) model.getAttribute("movieName"));
