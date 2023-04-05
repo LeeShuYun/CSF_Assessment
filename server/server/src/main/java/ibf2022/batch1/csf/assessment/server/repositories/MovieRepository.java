@@ -22,14 +22,15 @@ public class MovieRepository {
 	// You may modify the parameter but not the return type
 	// Write the native mongo database query in the comment below
 	// db.comments.find({
-	// movieName: { $regex: "godfather", $options: "i"},
-	// });
-	public int countComments() {
-		Criteria criterial = Criteria.where("title").regex("crystal", "i");
+	// movieName: { $regex: "test", $options: "i"},
+	// }).count();
+	public int countComments(String movieTitle) {
+		Criteria criterial = Criteria.where("title").regex(movieTitle, "i");
 		Query query = Query.query(criterial);
-		List<Document> list = template.find(query, Document.class, Constants.COLLECTION_COMMENTS);
-		System.out.println("countComments>>>> " + list.size());
-		return list.size();
+		// List<Document> list = template.find(query, Document.class, Constants.COLLECTION_COMMENTS);
+		int count = (int) template.count(query, Constants.COLLECTION_COMMENTS);
+		System.out.println("countComments >>>> " + count);
+		return count;
 	}
 
 	// TODO: Task 8

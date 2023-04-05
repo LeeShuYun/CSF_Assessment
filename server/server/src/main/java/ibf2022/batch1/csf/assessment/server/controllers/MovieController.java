@@ -59,20 +59,22 @@ public class MovieController {
 
 		// TODO - seems a lil broken and I'm running out of time... T_T
 		List<Review> movieList = movieService.searchReviews(query);
+		// int count = movieRepo.countComments(query);
+
 		// List<Review> movieList = new LinkedList<Review>();
 		// Review review = new Review();
-		// review.setCommentCount(4);
+		// review.setCommentCount(count);
+
 		// review.setByline("BEN KENIGSBERG");
 		// review.setTitle("The Black Godfather");
 		// review.setRating("TV-MA");
-		// review.setHeadline("‘The Black Godfather’ Review: The Music Executive Who
+		// review.setHeadline("'The Black Godfather' Review: The Music Executive Who
 		// Made It All Happen");
-		// review.setSummary("Reginald Hudlin’s documentary about Clarence Avant
+		// review.setSummary("Reginald Hudlin's documentary about Clarence Avant
 		// includes many golden anecdotes.");
 		// review.setReviewURL("https://www.nytimes.com/2019/06/06/movies/the-black-godfather-review.html");
 		// review.setImage(
 		// "https://static01.nyt.com/images/2019/06/05/arts/blackgodfather1/blackgodfather1-mediumThreeByTwo210.jpg");
-
 		// movieList.add(review);
 
 		System.out.printf("movieList>>> ", movieList.toString());
@@ -101,18 +103,19 @@ public class MovieController {
 	}
 
 	// Task 5. returns number of documents in comments collection
-	@GetMapping(path = "/api/commentNum", produces = MediaType.APPLICATION_JSON_VALUE)
-	@ResponseBody
-	public ResponseEntity<String> countComments(String movieName) {
-		int count = movieRepo.countComments();
+	// @GetMapping(path = "/api/commentNum", produces =
+	// MediaType.APPLICATION_JSON_VALUE)
+	// @ResponseBody
+	// public ResponseEntity<String> countComments(String movieName) {
+	// int count = movieRepo.countComments();
 
-		String jsonPayload = Json.createObjectBuilder()
-				.add("count", count)
-				.build()
-				.toString();
+	// String jsonPayload = Json.createObjectBuilder()
+	// .add("count", count)
+	// .build()
+	// .toString();
 
-		return ResponseEntity.ok(jsonPayload);
-	}
+	// return ResponseEntity.ok(jsonPayload);
+	// }
 
 	// Task 7
 	@PostMapping(path = "/api/comment", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
