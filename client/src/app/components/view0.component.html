@@ -1,0 +1,70 @@
+<h1>View 0</h1>
+<form class="form" [formGroup]="form" (ngSubmit)="submitForm()">
+  <div>
+    <label>Name: </label>
+    <input type="text" size="30" placeholder="Name here" formControlName="name">
+  </div>
+  <div *ngIf="isControlInvalid('name')" class="error">
+    Warning message
+  </div>
+
+  <div>
+    <label>Email: </label>
+    <input type="email" placeholder="Your email here" formControlName="email">
+  </div>
+  <div *ngIf="isControlInvalid('email')" class="error">
+    Warning message
+  </div>
+
+  <div>
+    <label>Date:</label>
+    <input type="date" size="30" formControlName="date">
+  </div>
+  <div *ngIf="isControlInvalid('date')" class="error">
+    Warning message
+  </div>
+  <div>
+    <span>Priority:</span>
+
+    <span> High </span>
+    <input
+      type="radio"
+      name="priority"
+      value="high"
+      formControlName="priority"
+      />
+    <span> Medium </span>
+    <input
+      type="radio"
+      name="priority"
+      value="med"
+      formControlName="priority"
+      />
+    <span> Low </span>
+    <input
+      type="radio"
+      name="priority"
+      value="low"
+      formControlName="priority"
+      />
+    <div *ngIf="isControlInvalid('priority')" class="error">
+      Please choose a priority.
+    </div>
+  </div>
+
+  <div>
+    <label>Location:</label>
+    <select
+      class="custom-select mb-3"
+      formControlName="choices">
+      <option value="">Choose City</option>
+      <option *ngFor="let city of cityList" [ngValue]="city">
+        {{ city }}
+      </option>
+    </select>
+    <div *ngIf="isControlInvalid('choices')" class="error">
+      Please choose one.
+    </div>
+  </div>
+  <button type="submit" [disabled]="form.invalid">Submit</button>
+</form>
