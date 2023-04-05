@@ -19,7 +19,8 @@ export class DataService {
       .set("query", movieName);
 
     return firstValueFrom(
-      this.httpClient.get('http://localhost:8080/api/search', { params, headers }));
+      // this.httpClient.get('http://localhost:8080/api/search', { params, headers }));
+      this.httpClient.get('/api/search', { params, headers }));
 
 
   }
@@ -28,7 +29,8 @@ export class DataService {
   getNumberOfComments(movieName: string): Promise<any> {
     console.log("getting Comment count")
     return firstValueFrom(
-      this.httpClient.get('http://localhost:8080/api/comment'));
+      // this.httpClient.get('http://localhost:8080/api/comment'));
+      this.httpClient.get('/api/comment'));
   }
 
   //POST /api/commentinsert
@@ -39,11 +41,14 @@ export class DataService {
     body.set('rating', comment.rating.toString());
     body.set('comment', comment.comment);
 
+    const headers = new HttpHeaders().set('Content-Type', 'application/x-www-form-urlencoded');
+
     // const payload = JSON.stringify(comment);
     // console.log("dataSvc comment payload>>", payload)
 
     return firstValueFrom(
-      this.httpClient.post('http://localhost:8080/api/insertcomment', body));
+      // this.httpClient.post('http://localhost:8080/api/insertcomment', body));
+      this.httpClient.post('api/insertcomment', body, { headers }));
   }
 }
 

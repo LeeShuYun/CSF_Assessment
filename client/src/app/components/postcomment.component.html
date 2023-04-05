@@ -21,7 +21,7 @@
     <label> Comments: </label>
     <br/>
       <textarea name="notes" cols="30" rows="10"
-        formGroupName="comment"></textarea>
+        formControlName="comment"></textarea>
     </div>
     <div *ngIf="isControlInvalid('comment')" class="error">
       Required field.

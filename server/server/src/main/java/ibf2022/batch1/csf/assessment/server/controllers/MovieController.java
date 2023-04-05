@@ -115,7 +115,9 @@ public class MovieController {
 	}
 
 	// Task 7
-	@PostMapping(path = "/api/insertcomment", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	@PostMapping(path = "/api/insertcomment", 
+	consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE, 
+	produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<String> insertComments(@RequestBody Comment comment) {
 		// Comment comment = new Comment();
 		// comment.setMovieName((String) model.getAttribute("movieName"));

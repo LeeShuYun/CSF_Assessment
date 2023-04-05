@@ -44,11 +44,9 @@ export class PostcommentComponent implements OnInit, OnDestroy {
 
     this.form.reset();
 
-    this.router.navigate(['view1']);
+    this.router.navigate(['/view1', this.movieName]);
 
   }
-
-
 
   isControlInvalid(ctrlName: string) {
     const ctrl = this.form.get(ctrlName) as FormControl;
@@ -70,7 +68,7 @@ export class PostcommentComponent implements OnInit, OnDestroy {
 
       comment: this.fb.control("", [
         Validators.required,
-      ]), //end of date
+      ])
     });
   }
 

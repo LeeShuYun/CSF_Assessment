@@ -31,10 +31,10 @@ public class MovieService {
 	private static final Logger logger = LoggerFactory.getLogger(MovieService.class);
 
 	@Value("${nyt.api.url}")
-	private String apiURL = "https://api.nytimes.com/svc/movies/v2/reviews/search.json";
+	private String apiURL;
 
 	@Value("${nyt.api.key}")
-	private String apiKey = "yo7GlM2J6KUIeCpoSt3AX4Gmt82aPoD7";
+	private String apiKey;
 
 	// TODO: Task 4
 	// DO NOT CHANGE THE METHOD'S SIGNATURE
@@ -67,6 +67,7 @@ public class MovieService {
 
 		// decode jsonResponse into JsonObj, get JsonArray out of JsonObj
 		String payload = jsonResponse.getBody();
+		System.out.println(payload);
 		JsonReader reader = Json.createReader(new StringReader(payload));
 		JsonObject movieResp = reader.readObject();
 
