@@ -7,7 +7,7 @@
 <table *ngFor="let movie of movieList">
   <td><img src="{{imageUrl}}" /></td>
   <td>
-    <a [routerLink]="movie.reviewUrl">
+    <a href="movie.reviewUrl">
       <h2>Title: {{movie.title}} Rating: {{movie.rating}}</h2>
     </a>
 
@@ -15,7 +15,7 @@
     <h4>Summary: {{movie.summary}}</h4>
     <p>Number of Comments: {{movie.numberOfComments}}</p>
 
-    <button type="button" [routerLink]="['/view2', movie.name]">Comment</button>
+    <button type="button" [routerLink]="['/view2']">Comment</button>
   </td>
 </table>
 <div>

@@ -1,11 +1,11 @@
-<h1>View 0</h1>
+<h1>Post Comment for {{movieName}}</h1>
 <form class="form" [formGroup]="form" (ngSubmit)="postComment()">
   <div>
     <label>Name: </label>
     <input type="text" size="30" placeholder="Name here" formControlName="name">
   </div>
   <div *ngIf="isControlInvalid('name')" class="error">
-    Warning message
+    Need a name. Must be at least 3 characters long.
   </div>
 
   <div>
@@ -13,16 +13,23 @@
     <input type="number" size="30" formControlName="rating">
   </div>
 
+  <div *ngIf="isControlInvalid('rating')" class="error">
+    Rating is between 1 to 5.
+  </div>
+
   <div>
     <label> Comments: </label>
     <br/>
       <textarea name="notes" cols="30" rows="10"
-        formGroupName="comment">
-      </textarea>
+        formGroupName="comment"></textarea>
     </div>
     <div *ngIf="isControlInvalid('comment')" class="error">
-      Warning message
+      Required field.
     </div>
 
-    <button type="submit" [disabled]="form.invalid">Submit</button>
+    <button type="submit" [disabled]="form.invalid">Submit {{ !form.invalid }}</button>
   </form>
+
+  <div>
+    {{ printtest | async | json }}
+  </div>

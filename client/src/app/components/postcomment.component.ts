@@ -3,7 +3,7 @@ import { AbstractControl, Form, FormBuilder, FormControl, FormGroup, ValidationE
 import { DataService } from '../services/data.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Comment, Review } from '../models';
-import { Subscription } from 'rxjs';
+import { Observable, Subscription, debounceTime } from 'rxjs';
 
 @Component({
   selector: 'app-postcomment',
@@ -12,9 +12,9 @@ import { Subscription } from 'rxjs';
 })
 export class PostcommentComponent implements OnInit, OnDestroy {
   form!: FormGroup;
-  urlParams$!: Subscription;
   movieName!: string;
-  movieList! : Review[]
+  movieList!: Review[]
+  printtest!: Observable<any>;
 
   constructor(private fb: FormBuilder,
     private dataSvc: DataService,
@@ -27,22 +27,8 @@ export class PostcommentComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.form = this.createForm();
-    this.urlParams$ = this.aRoute.params.subscribe(
-      async (params) => {
-        this.movieName = params['movie'];
-        console.log(this.movieName);
-        const l = await this.dataSvc.getSearch(this.movieName);
-        console.log(l);
-        if (l === undefined || l.length == 0) {
-          this.router.navigate(['/'])
-        }else{
-            this.movieList = l;
-        }
-
-      }
-    );
+    this.printtest = this.form.valueChanges.pipe(debounceTime(500));
   }
-
 
   postComment() {
     const comment: Comment = {
@@ -52,13 +38,14 @@ export class PostcommentComponent implements OnInit, OnDestroy {
       comment: this.form.get('comment')?.value,
     };
 
-    //do something with Task object
     console.log(comment)
+
+    this.dataSvc.postComment(comment);
 
     this.form.reset();
 
-    //this works!
-    this.router.navigate(['/search']);
+    this.router.navigate(['view1']);
+
   }
 
 
@@ -69,23 +56,20 @@ export class PostcommentComponent implements OnInit, OnDestroy {
   }
 
   createForm(): FormGroup {
-
-
     return this.fb.group({
       name: this.fb.control('', [
-        // Validators.required,
-        // Validators.minLength(5),
-        // this.nonWhiteSpace,
+        Validators.required,
+        Validators.minLength(3),
+        this.nonWhiteSpace,
 
       ]),
       rating: this.fb.control("", [
-        // Validators.required,
-        // Validators.email
+        Validators.required,
+        this.between1to5,
       ]),
 
       comment: this.fb.control("", [
         Validators.required,
-
       ]), //end of date
     });
   }
@@ -95,9 +79,12 @@ export class PostcommentComponent implements OnInit, OnDestroy {
     if (ctrl.value.trim().length > 0) return null;
     return { nonWhiteSpace: true } as ValidationErrors;
   };
+  readonly between1to5 = (ctrl: AbstractControl) => {
+    if (ctrl.value >= 1 && ctrl.value <= 5) return null;
+    return { ratingNot1to5: true } as ValidationErrors;
+  };
 
   //destroy ==================
   ngOnDestroy() {
-    this.urlParams$.unsubscribe();
   }
 }

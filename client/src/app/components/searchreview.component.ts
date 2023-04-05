@@ -1,16 +1,17 @@
-import { Component, ElementRef, HostListener, ViewChild } from '@angular/core';
+import { Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
 import { AbstractControl, FormBuilder, FormControl, FormGroup, ValidationErrors, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { DataService } from '../services/data.service';
-import { firstValueFrom } from 'rxjs';
+import { Observable, debounceTime, firstValueFrom, map, startWith, tap } from 'rxjs';
 
 @Component({
   selector: 'app-searchreview',
   templateUrl: './searchreview.component.html',
   styleUrls: ['./searchreview.component.css']
 })
-export class SearchreviewComponent {
+export class SearchreviewComponent implements OnInit {
   form!: FormGroup;
+  printtest!: Observable<any>;
 
   constructor(private fb: FormBuilder,
     private dataSvc: DataService,
@@ -20,12 +21,22 @@ export class SearchreviewComponent {
   ) {
     this.form = this.createForm();
   }
+  ngOnInit(): void {
+    this.printtest = this.form.valueChanges.pipe(debounceTime(500));
+    
+  }
+
 
   submitForm() {
     const name = this.form.get('name')?.value;
-    console.log(name)
+    console.log("name>>> ", name);
+
+    this.dataSvc.getSearch(name);
+    console.log()
     this.form.reset();
-    this.router.navigate(['/view1']);
+    this.router.navigate(['/view1', name]);
+
+
   }
 
 

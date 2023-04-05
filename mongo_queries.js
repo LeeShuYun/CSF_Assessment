@@ -1,11 +1,11 @@
-db.comment.insert({
-    title: "disenchante", season: 1, 
-});
+db.comments.countDocuments(
+);
 
-db.comment.aggregate([
+db.comments.insertOne(
 {
-    $group: {
-        count: { $sum: 1 }, // count the number of docs in each group of rating
-    }
-    }
-])
+    movieName: "Fodfather"
+    name:"hello mcdonald"
+    rating: 1
+    comment: "comment text here"
+}
+)

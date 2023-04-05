@@ -31,10 +31,10 @@ public class MovieService {
 	private static final Logger logger = LoggerFactory.getLogger(MovieService.class);
 
 	@Value("${nyt.api.url}")
-	private String apiURL;
+	private String apiURL = "https://api.nytimes.com/svc/movies/v2/reviews/search.json";
 
 	@Value("${nyt.api.key}")
-	private String apiKey;
+	private String apiKey = "yo7GlM2J6KUIeCpoSt3AX4Gmt82aPoD7";
 
 	// TODO: Task 4
 	// DO NOT CHANGE THE METHOD'S SIGNATURE
@@ -70,17 +70,18 @@ public class MovieService {
 		JsonReader reader = Json.createReader(new StringReader(payload));
 		JsonObject movieResp = reader.readObject();
 
-		logger.debug("movieResp >>>  " + movieResp.toString());
+		// hiccup here??? TODO
+		System.out.println(movieResp.toString());
 
 		// retrieve the results which contain array of movie objs
 		JsonArray resultList = movieResp.getJsonArray("results");
 
 		// convert jsonarray to List<Review>
 		List<Review> reviewsList = new ArrayList<Review>();
-		// for (JsonValue movie : resultList) {
-		// JsonObject movieJsonObj = movie.asJsonObject();
-		// reviewsList.add(Utils.jsontoReview(movieJsonObj));
-		// }
+		for (JsonValue movie : resultList) {
+			JsonObject movieJsonObj = movie.asJsonObject();
+			reviewsList.add(Utils.jsontoReview(movieJsonObj));
+		}
 
 		return reviewsList;
 	}
