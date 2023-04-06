@@ -38,7 +38,7 @@ import jakarta.json.JsonObject;
 
 @Controller
 @CrossOrigin(origins = "*")
-@RequestMapping(path = "/api")
+@RequestMapping(path = "/api", produces = MediaType.APPLICATION_JSON_VALUE)
 public class MovieController {
 
 	@Autowired
@@ -52,7 +52,7 @@ public class MovieController {
 	// TODO: Task 3, Task 4, Task 8
 
 	// task 3
-	@GetMapping(path = "/search", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(path = "/search", consumes = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	public ResponseEntity<String> getMovieByName(
 			@RequestParam(required = true) String query) {
@@ -61,16 +61,13 @@ public class MovieController {
 
 		List<Review> movieList = movieService.searchReviews(query);
 
-		System.out.println("movieList>>>>" + movieList.get(0).toString());
-		// List<Review> -> String Json
+		// System.out.println("Controller movieList>>>>" + movieList.get(0).toString());
+
 		JsonArrayBuilder arrBuilder = Json.createArrayBuilder();
 		// for (Review reviewObj : movieList) {
 		// JsonObjectBuilder jObjBr = Utils.reviewToJson(reviewObj);
 		// arrBuilder.add(jObjBr);
 		// }
-		// movieList.stream()
-		// .map(v -> Utils.reviewToJson(v))
-		// .map(v -> arrBuilder.add(v));
 
 		movieList.stream()
 				.forEach(v -> {
@@ -94,18 +91,8 @@ public class MovieController {
 		}
 	}
 
-	// Task 5. returns number of documents in comments collection
-	// @GetMapping(path = "/api/commentNum", produces =
-	// MediaType.APPLICATION_JSON_VALUE)
-	// @ResponseBody
-	// public ResponseEntity<String> countComments(String movieName) {
-	// int count = movieRepo.countComments();
-
-	// return ResponseEntity.ok(jsonPayload);
-	// }
-
 	// Task 7
-	@PostMapping(path = "/comment", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	@PostMapping(path = "/comment", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
 	public @ResponseBody ResponseEntity<String> insertComments(Comment comment) {
 		System.out.println("insertComment>>> " + comment.getComment());
 		movieRepo.insertComment(comment);

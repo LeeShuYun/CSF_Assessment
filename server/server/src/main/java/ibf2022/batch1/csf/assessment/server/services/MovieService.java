@@ -110,11 +110,10 @@ public class MovieService {
 			review.setImage(multimediasrc);
 		}
 
-		// TODO
 		System.out.println("review Title >>>> " + review.getTitle());
 		try {
-			int count = movieRepo.countComments("god");
-			System.out.println(" Utils count >>> " + count);
+			int count = movieRepo.countComments(review.getTitle());
+			// System.out.println(" Utils count >>> " + count);
 			review.setCommentCount(count);
 		} catch (NullPointerException e) {
 			e.printStackTrace();

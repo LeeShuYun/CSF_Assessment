@@ -19,7 +19,7 @@ public class ServerApplication implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) throws Exception {
-		int count = movieRepo.countComments("godfather");
-		System.out.println("cmdLineRunner test count>>" + count);
+		// int count = movieRepo.countComments("godfather");
+		// System.out.println("cmdLineRunner test count>>" + count);
 	}
 }
