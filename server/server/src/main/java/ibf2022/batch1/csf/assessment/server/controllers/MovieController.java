@@ -1,5 +1,6 @@
 package ibf2022.batch1.csf.assessment.server.controllers;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -32,11 +33,12 @@ import ibf2022.batch1.csf.assessment.server.repositories.MovieRepository;
 import ibf2022.batch1.csf.assessment.server.services.MovieService;
 import jakarta.json.Json;
 import jakarta.json.JsonArrayBuilder;
+import jakarta.json.JsonObjectBuilder;
 import jakarta.json.JsonObject;
 
 @Controller
 @CrossOrigin(origins = "*")
-@RequestMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(path = "/api")
 public class MovieController {
 
 	@Autowired
@@ -50,45 +52,35 @@ public class MovieController {
 	// TODO: Task 3, Task 4, Task 8
 
 	// task 3
-	@GetMapping(path = "/api/search", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(path = "/search", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	public ResponseEntity<String> getMovieByName(
 			@RequestParam(required = true) String query) {
 
 		logger.debug("searchterm : " + query);
 
-		// TODO - seems a lil broken and I'm running out of time... T_T
 		List<Review> movieList = movieService.searchReviews(query);
-		// int count = movieRepo.countComments(query);
 
-		// List<Review> movieList = new LinkedList<Review>();
-		// Review review = new Review();
-		// review.setCommentCount(count);
-
-		// review.setByline("BEN KENIGSBERG");
-		// review.setTitle("The Black Godfather");
-		// review.setRating("TV-MA");
-		// review.setHeadline("'The Black Godfather' Review: The Music Executive Who
-		// Made It All Happen");
-		// review.setSummary("Reginald Hudlin's documentary about Clarence Avant
-		// includes many golden anecdotes.");
-		// review.setReviewURL("https://www.nytimes.com/2019/06/06/movies/the-black-godfather-review.html");
-		// review.setImage(
-		// "https://static01.nyt.com/images/2019/06/05/arts/blackgodfather1/blackgodfather1-mediumThreeByTwo210.jpg");
-		// movieList.add(review);
-
-		System.out.printf("movieList>>> ", movieList.toString());
-
-		logger.debug("movieList>>> " + movieList.toString());
-
-		// the marshalling works at least
+		System.out.println("movieList>>>>" + movieList.get(0).toString());
+		// List<Review> -> String Json
 		JsonArrayBuilder arrBuilder = Json.createArrayBuilder();
-		// convert ArticleObj to JsonObj and add to ArrayBuilder
-		for (Review review2 : movieList) {
-			JsonObject jObj = Utils.reviewToJson(review2);
-			arrBuilder.add(jObj);
-		}
+		// for (Review reviewObj : movieList) {
+		// JsonObjectBuilder jObjBr = Utils.reviewToJson(reviewObj);
+		// arrBuilder.add(jObjBr);
+		// }
+		// movieList.stream()
+		// .map(v -> Utils.reviewToJson(v))
+		// .map(v -> arrBuilder.add(v));
 
+		movieList.stream()
+				.forEach(v -> {
+					arrBuilder.add(Utils.reviewToJson(v));
+				});
+		// check
+		// System.out.println("arrbuilder Controller>>>" +
+		// arrBuilder.build().toString());
+
+		// response
 		if (movieList.isEmpty()) {
 			JsonObject error = Json.createObjectBuilder()
 					.add("message", "No movies found")
@@ -109,32 +101,18 @@ public class MovieController {
 	// public ResponseEntity<String> countComments(String movieName) {
 	// int count = movieRepo.countComments();
 
-	// String jsonPayload = Json.createObjectBuilder()
-	// .add("count", count)
-	// .build()
-	// .toString();
-
 	// return ResponseEntity.ok(jsonPayload);
 	// }
 
 	// Task 7
-	@PostMapping(path = "/api/comment", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<String> insertComments(@RequestBody Comment comment) {
-		// Comment comment = new Comment();
-		// comment.setMovieName((String) model.getAttribute("movieName"));
-		// comment.setName((String) model.getAttribute("name"));
-		// comment.setRating((int) model.getAttribute("rating"));
-		// comment.setComment((String) model.getAttribute("comment"));
-
+	@PostMapping(path = "/comment", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody ResponseEntity<String> insertComments(Comment comment) {
 		System.out.println("insertComment>>> " + comment.getComment());
-		// Comment comment = new Comment();
-		// comment.setMovieName("Baby First Movie");
-		// comment.setName("User1802934");
-		// comment.setRating(5);
-		// comment.setComment("lots of cute scenes");
-
 		movieRepo.insertComment(comment);
-
-		return new ResponseEntity<String>("Comment Submitted.", HttpStatus.OK);
+		String jsonPayload = Json.createObjectBuilder()
+				.add("status", "Comment Submitted.")
+				.build()
+				.toString();
+		return new ResponseEntity<String>(jsonPayload, HttpStatus.OK);
 	}
 }

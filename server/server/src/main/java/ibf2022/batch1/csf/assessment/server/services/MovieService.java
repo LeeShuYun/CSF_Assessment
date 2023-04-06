@@ -4,9 +4,9 @@ import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +17,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import ibf2022.batch1.csf.assessment.server.Utils;
 import ibf2022.batch1.csf.assessment.server.models.Review;
+import ibf2022.batch1.csf.assessment.server.repositories.MovieRepository;
 import jakarta.json.Json;
 import jakarta.json.JsonArray;
 import jakarta.json.JsonObject;
@@ -28,10 +29,13 @@ import ibf2022.batch1.csf.assessment.server.Utils.*;
 
 @Service
 public class MovieService {
+
+	@Autowired
+	MovieRepository movieRepo;
+
 	private static final Logger logger = LoggerFactory.getLogger(MovieService.class);
 
-	@Value("${nyt.api.url}")
-	private String apiURL;
+	private static final String API_URL = "https://api.nytimes.com/svc/movies/v2/reviews/search.json";
 
 	@Value("${nyt.api.key}")
 	private String apiKey;
@@ -41,7 +45,7 @@ public class MovieService {
 	// https://api.nytimes.com/svc/movies/v2/reviews/search.json?query=godfather&api-key=
 	public List<Review> searchReviews(String query) {
 		String movieSearchURL = UriComponentsBuilder
-				.fromUriString(apiURL)
+				.fromUriString(API_URL)
 				.queryParam("query", query)
 				.queryParam("api-key", apiKey)
 				.toUriString();
@@ -67,12 +71,11 @@ public class MovieService {
 
 		// decode jsonResponse into JsonObj, get JsonArray out of JsonObj
 		String payload = jsonResponse.getBody();
-		System.out.println(payload);
+		// System.out.println(payload); //success
 		JsonReader reader = Json.createReader(new StringReader(payload));
 		JsonObject movieResp = reader.readObject();
 
-		// hiccup here??? TODO
-		System.out.println(movieResp.toString());
+		// System.out.println(movieResp.toString());
 
 		// retrieve the results which contain array of movie objs
 		JsonArray resultList = movieResp.getJsonArray("results");
@@ -81,9 +84,50 @@ public class MovieService {
 		List<Review> reviewsList = new ArrayList<Review>();
 		for (JsonValue movie : resultList) {
 			JsonObject movieJsonObj = movie.asJsonObject();
-			reviewsList.add(Utils.jsontoReview(movieJsonObj));
+			reviewsList.add(jsontoReview(movieJsonObj));
 		}
 
 		return reviewsList;
 	}
+
+	public Review jsontoReview(JsonObject movieJsonObj) {
+		Review review = new Review();
+		review.setTitle(jsonNullChecker(movieJsonObj, "display_title"));
+		review.setRating(jsonNullChecker(movieJsonObj, "mpaa_rating"));
+		review.setByline(jsonNullChecker(movieJsonObj, "byline"));
+		review.setHeadline(jsonNullChecker(movieJsonObj, "headline"));
+		review.setSummary(jsonNullChecker(movieJsonObj, "summary_short"));
+
+		JsonObject link = movieJsonObj.get("link").asJsonObject();
+		String linkurl = jsonNullChecker(link, "url");
+		review.setReviewURL(linkurl);
+
+		if (movieJsonObj.isNull("multimedia")) {
+			review.setImage("undefined");
+		} else {
+			JsonObject multimedia = movieJsonObj.getJsonObject("multimedia");
+			String multimediasrc = jsonNullChecker(multimedia, "src");
+			review.setImage(multimediasrc);
+		}
+
+		// TODO
+		System.out.println("review Title >>>> " + review.getTitle());
+		try {
+			int count = movieRepo.countComments("god");
+			System.out.println(" Utils count >>> " + count);
+			review.setCommentCount(count);
+		} catch (NullPointerException e) {
+			e.printStackTrace();
+		}
+		return review;
+	}
+
+	private String jsonNullChecker(JsonObject jsonObj, String attribute) {
+		if (jsonObj.isNull(attribute)) {
+			return "undefined";
+		} else {
+			return jsonObj.get(attribute).toString();
+		}
+	}
+
 }
