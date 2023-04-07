@@ -12,39 +12,37 @@ import { Observable, Subscription, debounceTime } from 'rxjs';
 })
 export class PostcommentComponent implements OnInit, OnDestroy {
   form!: FormGroup;
+
+  searchTerm!: string;
+  movieList!: Review[];
   movieName!: string;
-  movieList!: Review[]
-  printtest!: Observable<any>;
 
   constructor(private fb: FormBuilder,
     private dataSvc: DataService,
-    //private repo: SomeRepo,
     private router: Router,
-    private aRoute: ActivatedRoute
   ) {
 
   }
 
   ngOnInit(): void {
     this.form = this.createForm();
-    this.printtest = this.form.valueChanges.pipe(debounceTime(500));
   }
 
   postComment() {
     const comment: Comment = {
-      movieName: this.movieName,
+      movieName: "",
       name: this.form.get('name')?.value,
       rating: this.form.get('rating')?.value,
       comment: this.form.get('comment')?.value,
     };
 
-    console.log(comment)
-
     this.dataSvc.postComment(comment);
+
+    console.log("posted comment", comment);
 
     this.form.reset();
 
-    this.router.navigate(['/view1', this.movieName]);
+    this.router.navigate(['/search', { query : this.searchTerm}]);
 
   }
 

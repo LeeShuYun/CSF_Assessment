@@ -6,3 +6,8 @@ img {
 .searchheader{
   font-size: 2em;
 }
+
+.blackborder{
+  border-radius: 5px;
+  border: solid black 1px;
+}

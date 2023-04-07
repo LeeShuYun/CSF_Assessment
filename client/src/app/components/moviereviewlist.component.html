@@ -1,21 +1,35 @@
-<p>moviereviewlist works!</p>
+
+
 <div>
   <span class="searchheader"> Search Result </span>
   <button [routerLink]="['']">Back</button>
 </div>
 
-<table *ngFor="let movie of movieList">
-  <td><img src="{{imageUrl}}" /></td>
-  <td>
-    <a href="movie.reviewUrl">
-      <h2>Title: {{movie.title}} Rating: {{movie.rating}}</h2>
-    </a>
+<div *ngIf="movieList; else noData">
 
-    <h3>{{movie.headline}}</h3>
-    <h4>Summary: {{movie.summary}}</h4>
-    <p>Number of Comments: {{movie.numberOfComments}}</p>
+  <table *ngFor="let movie of movieList">
+    <td><img src="{{imageUrl}}" /></td>
+    <td>
+      <a href="movie.reviewUrl">
+        <h2>Title: {{movie.title}} Rating: {{movie.rating}}</h2>
+      </a>
 
-    <button type="button" [routerLink]="['/view2']">Comment</button>
-  </td>
-</table>
-<div>
+      <h3>{{movie.headline}}</h3>
+      <h4>Summary: {{movie.summary}}</h4>
+      <p>Number of Comments: {{movie.numberOfComments}}</p>
+
+      <button type="button" [routerLink]="['/search']" >Comment</button>
+    </td>
+  </table>
+</div>
+
+<ng-template #noData>
+  <h1>Getting data...</h1>
+  <div class="spinner-border text-light" role="status">
+    <span class="visually-hidden">Loading...</span>
+  </div>
+  <h3> Your search produces no result </h3>
+</ng-template>
+
+<!-- <p> Checking API data directly... </p>
+{{searchDirect | async | json}} -->
