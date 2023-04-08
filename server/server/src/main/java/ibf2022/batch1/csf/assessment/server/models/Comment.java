@@ -38,4 +38,12 @@ public class Comment {
         this.comment = comment;
     }
 
+    @Override
+    public String toString() {
+        return "Comment [movieName=" + movieName + ", name=" + name + ", rating=" + rating + ", comment=" + comment
+                + "]";
+    }
+
+    
+
 }

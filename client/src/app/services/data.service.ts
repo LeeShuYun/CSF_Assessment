@@ -14,24 +14,18 @@ export class DataService {
 
   constructor(private httpClient: HttpClient) { }
 
-  set search(searchTerm: string) {
+  setSearch(searchTerm: string) {
     this.searchTerm = searchTerm;
   }
 
   //GET /api/search?query=<user's search term>
   getSearch(query: string): Promise<any> {
-    console.log("search Term", this.searchTerm)
-    if (this.searchTerm) {
-    } else {
-      this.searchTerm = query; //store for later
-    }
-
     const headers = new HttpHeaders().set('Content-Type', 'application/json; charset=utf-8');
     const params = new HttpParams()
-      .set("query", this.searchTerm);
+      .set("query", query);
     return lastValueFrom(
-      this.httpClient.get('http://localhost:8080/api/search', { params: params, headers: headers }));
-    // this.httpClient.get('/api/search', { params: params, headers: headers }));
+      // this.httpClient.get('http://localhost:8080/api/search', { params: params, headers: headers }));
+      this.httpClient.get<Review[]>('/api/search', { params: params, headers: headers }));
   }
 
   //testing my hypothesis TODO
@@ -92,15 +86,12 @@ export class DataService {
   //POST /api/comment
   postComment(comment: Comment): Promise<any> {
     const headers = new HttpHeaders().set('Content-Type', 'application/x-www-form-urlencoded');
-    const body = JSON.stringify(comment);
+    const body = new HttpParams().appendAll({ ...comment })
     console.log("posting comment >>", body);
 
     return lastValueFrom(
       this.httpClient.post<Comment>(
-        "http://localhost:8080/api/comment/" + comment.movieName,
-        body,
-        { headers: headers }
-      ));
+        "/api/comment", body.toString(), { headers }));
   }
 
 }

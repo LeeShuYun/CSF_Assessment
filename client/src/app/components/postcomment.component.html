@@ -1,8 +1,9 @@
-<h1>Post Comment for {{movieName}}</h1>
+<h1>Post Comment for {{title}}</h1>
 <form class="form" [formGroup]="form" (ngSubmit)="postComment()">
   <div>
     <label>Name: </label>
-    <input type="text" size="30" placeholder="Name here" formControlName="name">
+    <input type="text" size="30" placeholder="Name here"
+      formControlName="name">
   </div>
   <div *ngIf="isControlInvalid('name')" class="error">
     Need a name. Must be at least 3 characters long.
@@ -26,7 +27,7 @@
     <div *ngIf="isControlInvalid('comment')" class="error">
       Required field.
     </div>
-
     <button type="submit" [disabled]="form.invalid">Submit {{ !form.invalid }}</button>
-  </form>
+    <button type="button" [routerLink]="['/search']" [queryParams]="{query}">Back</button>
 
+  </form>

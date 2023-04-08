@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { AbstractControl, Form, FormBuilder, FormControl, FormGroup, ValidationErrors, Validators } from '@angular/forms';
 import { DataService } from '../services/data.service';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Params, Router } from '@angular/router';
 import { Comment, Review } from '../models';
 import { Observable, Subscription, debounceTime } from 'rxjs';
 
@@ -13,36 +13,42 @@ import { Observable, Subscription, debounceTime } from 'rxjs';
 export class PostcommentComponent implements OnInit, OnDestroy {
   form!: FormGroup;
 
-  searchTerm!: string;
+  query!: string;
   movieList!: Review[];
-  movieName!: string;
+  title!: string;
 
   constructor(private fb: FormBuilder,
     private dataSvc: DataService,
     private router: Router,
+    private aRoute: ActivatedRoute
   ) {
 
   }
 
   ngOnInit(): void {
     this.form = this.createForm();
+    this.title = this.aRoute.snapshot.params['movieName'];
+    this.query = localStorage.getItem("query")!;
   }
 
   postComment() {
-    const comment: Comment = {
-      movieName: "",
-      name: this.form.get('name')?.value,
-      rating: this.form.get('rating')?.value,
-      comment: this.form.get('comment')?.value,
-    };
+    // const comment: Comment = {
+    //   title: "",
+    //   name: this.form.get('name')?.value,
+    //   rating: this.form.get('rating')?.value,
+    //   comment: this.form.get('comment')?.value,
+    // };
 
+    const comment = this.form.value as Comment;
+    comment.movieName = this.title;
+    console.log("comment>>>", comment)
     this.dataSvc.postComment(comment);
 
     console.log("posted comment", comment);
 
     this.form.reset();
-
-    this.router.navigate(['/search', { query : this.searchTerm}]);
+    const queryParams = { query: this.query }
+    this.router.navigate(['/search'], { queryParams });
 
   }
 
@@ -56,12 +62,13 @@ export class PostcommentComponent implements OnInit, OnDestroy {
       name: this.fb.control('', [
         Validators.required,
         Validators.minLength(3),
-        this.nonWhiteSpace,
+        // this.nonWhiteSpace,
 
       ]),
       rating: this.fb.control("", [
         Validators.required,
-        this.between1to5,
+        Validators.min(1),
+        Validators.max(5),
       ]),
 
       comment: this.fb.control("", [

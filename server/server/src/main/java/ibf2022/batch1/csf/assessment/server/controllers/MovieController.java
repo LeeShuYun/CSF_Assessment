@@ -13,13 +13,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.DeleteMapping;
+
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -36,8 +33,8 @@ import jakarta.json.JsonArrayBuilder;
 import jakarta.json.JsonObjectBuilder;
 import jakarta.json.JsonObject;
 
-@Controller
-@CrossOrigin(origins = "*")
+@RestController
+// @CrossOrigin(origins = "*")
 @RequestMapping(path = "/api", produces = MediaType.APPLICATION_JSON_VALUE)
 public class MovieController {
 
@@ -57,45 +54,34 @@ public class MovieController {
 	public ResponseEntity<String> getMovieByName(
 			@RequestParam(required = true) String query) {
 
-		logger.debug("searchterm : " + query);
+		// logger types to use
+		logger.info("searchterm >>>>>> " + query);
+		logger.error("searchterm >>>>>> " + query);
 
 		List<Review> movieList = movieService.searchReviews(query);
 
 		// System.out.println("Controller movieList>>>>" + movieList.get(0).toString());
 
 		JsonArrayBuilder arrBuilder = Json.createArrayBuilder();
-		// for (Review reviewObj : movieList) {
-		// JsonObjectBuilder jObjBr = Utils.reviewToJson(reviewObj);
-		// arrBuilder.add(jObjBr);
-		// }
 
 		movieList.stream()
 				.forEach(v -> {
 					arrBuilder.add(Utils.reviewToJson(v));
 				});
-		// check
-		// System.out.println("arrbuilder Controller>>>" +
-		// arrBuilder.build().toString());
 
-		// response
-		if (movieList.isEmpty()) {
-			JsonObject error = Json.createObjectBuilder()
-					.add("message", "No movies found")
-					.build();
-			return ResponseEntity.status(404).body(error.toString());
-		} else {
-			return ResponseEntity
-					.status(HttpStatus.OK)
-					.contentType(MediaType.APPLICATION_JSON)
-					.body(arrBuilder.build().toString());
-		}
+		return ResponseEntity
+				.status(HttpStatus.OK)
+				.contentType(MediaType.APPLICATION_JSON)
+				.body(arrBuilder.build().toString());
+
 	}
 
 	// Task 7
 	@PostMapping(path = "/comment", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-	public @ResponseBody ResponseEntity<String> insertComments(Comment comment) {
-		System.out.println("insertComment>>> " + comment.getComment());
+	public ResponseEntity<String> insertComments(Comment comment) {
+		// System.out.println("insertComment>>> " + comment.getComment());
 		movieRepo.insertComment(comment);
+		System.out.println("comment in controller>>>> " + comment);
 		String jsonPayload = Json.createObjectBuilder()
 				.add("status", "Comment Submitted.")
 				.build()

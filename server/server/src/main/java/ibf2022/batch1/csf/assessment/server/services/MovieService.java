@@ -3,6 +3,7 @@ package ibf2022.batch1.csf.assessment.server.services;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -58,49 +59,58 @@ public class MovieService {
 		RestTemplate template = new RestTemplate();
 
 		// init the Response to catch the response data
-		ResponseEntity<String> jsonResponse = null;
+		ResponseEntity<String> resp = null;
 
 		// send the request using the client
 		try {
 			// executes the req entity and returns a response with json payload body
-			jsonResponse = template.exchange(req, String.class);
+			resp = template.exchange(req, String.class);
 		} catch (RestClientException ex) {
 			ex.printStackTrace();
-			return Collections.EMPTY_LIST;
+			return new ArrayList<Review>();
 		}
 
-		// decode jsonResponse into JsonObj, get JsonArray out of JsonObj
-		String payload = jsonResponse.getBody();
-		// System.out.println(payload); //success
+		// retrieval of payload data
+		String payload = resp.getBody();
+		System.out.println(payload);
 		JsonReader reader = Json.createReader(new StringReader(payload));
 		JsonObject movieResp = reader.readObject();
 
+		// catching "results" array nulls, when query doesn't match to any movietitle
+		if (movieResp.isNull("results")) {
+			return new ArrayList<Review>();
+		}
+
 		// System.out.println(movieResp.toString());
 
-		// retrieve the results which contain array of movie objs
+		// if not null and query successful, "results" contains movie objs
 		JsonArray resultList = movieResp.getJsonArray("results");
 
+		// System.out.println(resultList.toString());
+
 		// convert jsonarray to List<Review>
-		List<Review> reviewsList = new ArrayList<Review>();
-		for (JsonValue movie : resultList) {
-			JsonObject movieJsonObj = movie.asJsonObject();
-			reviewsList.add(jsontoReview(movieJsonObj));
-		}
+		// List<Review> reviewsList = new LinkedList<Review>();
+		// for (JsonValue movie : resultList) {
+		// JsonObject movieJsonObj = movie.asJsonObject(); //cast to jsonobj
+		// reviewsList.add(jsontoReview(movieJsonObj)); //
+		// }
+
+		List<Review> reviewsList = resultList.stream()
+				.map(v -> v.asJsonObject())
+				.map(v -> jsontoReview(v))
+				.toList();
 
 		return reviewsList;
 	}
 
 	public Review jsontoReview(JsonObject movieJsonObj) {
 		Review review = new Review();
-		review.setTitle(jsonNullChecker(movieJsonObj, "display_title"));
-		review.setRating(jsonNullChecker(movieJsonObj, "mpaa_rating"));
-		review.setByline(jsonNullChecker(movieJsonObj, "byline"));
-		review.setHeadline(jsonNullChecker(movieJsonObj, "headline"));
-		review.setSummary(jsonNullChecker(movieJsonObj, "summary_short"));
-
-		JsonObject link = movieJsonObj.get("link").asJsonObject();
-		String linkurl = jsonNullChecker(link, "url");
-		review.setReviewURL(linkurl);
+		review.setTitle(movieJsonObj.getString( "display_title"));
+		review.setRating(movieJsonObj.getString( "mpaa_rating"));
+		review.setByline(movieJsonObj.getString( "byline"));
+		review.setHeadline(movieJsonObj.getString( "headline"));
+		review.setSummary(movieJsonObj.getString("summary_short"));
+		review.setReviewURL(movieJsonObj.getJsonObject("link").getString("url"));
 
 		if (movieJsonObj.isNull("multimedia")) {
 			review.setImage("undefined");
@@ -125,7 +135,7 @@ public class MovieService {
 		if (jsonObj.isNull(attribute)) {
 			return "undefined";
 		} else {
-			return jsonObj.get(attribute).toString();
+			return jsonObj.getString(attribute);
 		}
 	}
 

@@ -20,7 +20,8 @@ export class SearchreviewComponent implements OnInit {
 
   constructor(private fb: FormBuilder,
     private router: Router,
-    private aRoute: ActivatedRoute
+    private aRoute: ActivatedRoute,
+    private dataSvc: DataService
   ) {
   }
   ngOnInit(): void {
@@ -30,7 +31,8 @@ export class SearchreviewComponent implements OnInit {
 
   submitForm() {
     const query = this.form.get('name')?.value;
-    console.log("query>>> ", query);
+    this.dataSvc.setSearch(query)
+    console.log("view0 queryString>>> ", query);
     this.form.reset();
     this.router.navigate(['/search'], {
       queryParams: { query }
