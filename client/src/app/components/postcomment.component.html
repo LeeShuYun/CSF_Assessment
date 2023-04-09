@@ -27,7 +27,6 @@
     <div *ngIf="isControlInvalid('comment')" class="error">
       Required field.
     </div>
-    <button type="submit" [disabled]="form.invalid">Submit {{ !form.invalid }}</button>
-    <button type="button" [routerLink]="['/search']" [queryParams]="{query}">Back</button>
-
+    <button type="submit" [disabled]="form.invalid">Submit </button>
+    <!-- <button type="button" [routerLink]="['/search']" [queryParams]="{query}">Back</button> -->
   </form>

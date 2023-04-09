@@ -33,7 +33,8 @@ import jakarta.json.JsonArrayBuilder;
 import jakarta.json.JsonObjectBuilder;
 import jakarta.json.JsonObject;
 
-@RestController
+@RestController // the type it consumes isn't affected by restcontroller, the type that is
+				// produced is always response entity jsonvalue
 // @CrossOrigin(origins = "*")
 @RequestMapping(path = "/api", produces = MediaType.APPLICATION_JSON_VALUE)
 public class MovieController {
@@ -77,6 +78,7 @@ public class MovieController {
 	}
 
 	// Task 7
+
 	@PostMapping(path = "/comment", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
 	public ResponseEntity<String> insertComments(Comment comment) {
 		// System.out.println("insertComment>>> " + comment.getComment());
